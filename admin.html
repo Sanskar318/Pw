@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>STREAMx - Admin Dashboard (Secure)</title>
+    <title>STREAMx - Admin Dashboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-[#090a0f] text-slate-100 min-h-screen font-sans">
@@ -19,7 +19,7 @@
         
         <div class="mb-8">
             <h1 class="text-3xl font-bold tracking-tight">Add New PW Lecture / Content</h1>
-            <p class="text-slate-400 text-sm mt-1">Secure dashboard se naye batches aur links ko save karein.</p>
+            <p class="text-slate-400 text-sm mt-1">Yahan se aap naye batches, subjects aur unke m3u8 streaming links ko database (Local Storage) mein add kar sakte hain.</p>
         </div>
 
         <div class="bg-slate-900/50 border border-slate-800 rounded-2xl p-6 backdrop-blur-sm shadow-xl">
@@ -60,12 +60,7 @@
 
                 <div>
                     <label class="block text-sm font-medium text-slate-300 mb-2">Thumbnail Image URL (Optional)</label>
-                    <input type="url" id="thumbnailUrl" placeholder="https://link-to-image.jpg" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-slate-100 focus:outline-none focus:border-indigo-500 placeholder-slate-600 transition">
-                </div>
-
-                <div class="border-t border-slate-800 pt-4">
-                    <label class="block text-sm font-medium text-rose-400 mb-2">Admin Security Key (Password)</label>
-                    <input type="password" id="adminPassword" required placeholder="Enter Secret Password to Save" class="w-full bg-slate-950 border border-rose-900/50 rounded-xl px-4 py-3 text-slate-100 focus:outline-none focus:border-rose-500 placeholder-slate-700 transition">
+                    <input type="url" id="thumbnailUrl" placeholder="https://link-to-image.jpg (Khaali chhodne par default set hoga)" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-slate-100 focus:outline-none focus:border-indigo-500 placeholder-slate-600 transition">
                 </div>
 
                 <button type="submit" class="w-full py-4 bg-indigo-500 hover:bg-indigo-600 text-white font-semibold rounded-xl shadow-lg shadow-indigo-500/20 transition-all duration-300 transform active:scale-95">
@@ -87,19 +82,11 @@
         const form = document.getElementById('lectureForm');
         const listContainer = document.getElementById('lecturesList');
 
-        // Yahan aap apna khud ka secret password set kar sakte hain
-        const SECRET_PASSWORD = "PW2026"; 
-
+        // Form Submit Event
         form.addEventListener('submit', (e) => {
             e.preventDefault();
 
-            // Password Validation
-            const enteredPassword = document.getElementById('adminPassword').value;
-            if (enteredPassword !== SECRET_PASSWORD) {
-                alert('Wrong Admin Password! Data save nahi hua.');
-                return;
-            }
-
+            // Get Form values
             const title = document.getElementById('title').value;
             const batch = document.getElementById('batch').value;
             const subject = document.getElementById('subject').value;
@@ -107,9 +94,11 @@
             let thumbnailUrl = document.getElementById('thumbnailUrl').value;
 
             if(!thumbnailUrl) {
+                // Default placeholder image agar thumbnail nahi diya toh
                 thumbnailUrl = 'https://images.unsplash.com/photo-1616469829581-73993eb86b02?q=80&w=500';
             }
 
+            // Object banana ek lecture ka
             const newLecture = {
                 id: Date.now().toString(),
                 title,
@@ -119,15 +108,21 @@
                 thumbnailUrl
             };
 
+            // Pehle se save lectures ko nikalna
             let currentLectures = JSON.parse(localStorage.getItem('pw_lectures')) || [];
+            
+            // Naya lecture array mein add karna
             currentLectures.push(newLecture);
+
+            // Fir se local storage mein save kar dena
             localStorage.setItem('pw_lectures', JSON.stringify(currentLectures));
 
-            alert('Lecture Successfully Saved with Security Authentication!');
+            alert('Lecture Successfully Saved!');
             form.reset();
             renderLectures();
         });
 
+        // Save kiye huye lectures ko admin page par dikhane ka function
         function renderLectures() {
             let currentLectures = JSON.parse(localStorage.getItem('pw_lectures')) || [];
             if(currentLectures.length === 0) return;
@@ -147,14 +142,8 @@
             });
         }
 
+        // Delete Lecture function
         window.deleteLecture = function(id) {
-            // Delete karte waqt bhi password check lagana ho toh laga sakte hain
-            const promptPassword = prompt("Lecture delete karne ke liye Admin Password dalein:");
-            if (promptPassword !== SECRET_PASSWORD) {
-                alert("Galat password! Delete cancelled.");
-                return;
-            }
-
             let currentLectures = JSON.parse(localStorage.getItem('pw_lectures')) || [];
             currentLectures = currentLectures.filter(lec => lec.id !== id);
             localStorage.setItem('pw_lectures', JSON.stringify(currentLectures));
@@ -164,6 +153,7 @@
             }
         }
 
+        // Page load hone par list dikhao
         renderLectures();
     </script>
 </body>
