@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>STREAMx - Admin Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-[#090a0f] text-slate-100 min-h-screen font-sans">
+
+    <header class="border-b border-slate-800/60 bg-[#090a0f]/80 backdrop-blur px-6 py-4">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <a href="index.html" class="text-xl font-black tracking-wider text-white">STREAM<span class="text-indigo-500">X</span> <span class="text-xs text-slate-400 font-normal">ADMIN</span></a>
+            <a href="store.html" class="text-sm px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-lg transition">View Lecture Store →</a>
+        </div>
+    </header>
+
+    <main class="max-w-4xl mx-auto px-4 py-10">
+        
+        <div class="mb-8">
+            <h1 class="text-3xl font-bold tracking-tight">Add New PW Lecture / Content</h1>
+            <p class="text-slate-400 text-sm mt-1">Yahan se aap naye batches, subjects aur unke m3u8 streaming links ko database (Local Storage) mein add kar sakte hain.</p>
+        </div>
+
+        <div class="bg-slate-900/50 border border-slate-800 rounded-2xl p-6 backdrop-blur-sm shadow-xl">
+            <form id="lectureForm" class="space-y-6">
+                
+                <div>
+                    <label class="block text-sm font-medium text-slate-300 mb-2">Lecture Title / Name</label>
+                    <input type="text" id="title" required placeholder="e.g., Electrostatics 01 : Electric Charge" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-slate-100 focus:outline-none focus:border-indigo-500 placeholder-slate-600 transition">
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-sm font-medium text-slate-300 mb-2">Select Batch</label>
+                        <select id="batch" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-slate-100 focus:outline-none focus:border-indigo-500 transition">
+                            <option value="Yakeen NEET">Yakeen NEET</option>
+                            <option value="Arjuna JEE/NEET">Arjuna (Class 11)</option>
+                            <option value="Lakshya JEE/NEET">Lakshya (Class 12)</option>
+                            <option value="Other Content">Other / Extra Content</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-slate-300 mb-2">Select Subject</label>
+                        <select id="subject" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-slate-100 focus:outline-none focus:border-indigo-500 transition">
+                            <option value="Physics">Physics</option>
+                            <option value="Chemistry">Chemistry</option>
+                            <option value="Biology">Biology</option>
+                            <option value="Mathematics">Mathematics</option>
+                            <option value="General">General / Strategy</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-slate-300 mb-2">HLS Stream URL (.m3u8)</label>
+                    <input type="url" id="streamUrl" required placeholder="https://your-storage.com/stream/output.m3u8" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-slate-100 focus:outline-none focus:border-indigo-500 placeholder-slate-600 transition font-mono text-sm text-indigo-400">
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-slate-300 mb-2">Thumbnail Image URL (Optional)</label>
+                    <input type="url" id="thumbnailUrl" placeholder="https://link-to-image.jpg (Khaali chhodne par default set hoga)" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-slate-100 focus:outline-none focus:border-indigo-500 placeholder-slate-600 transition">
+                </div>
+
+                <button type="submit" class="w-full py-4 bg-indigo-500 hover:bg-indigo-600 text-white font-semibold rounded-xl shadow-lg shadow-indigo-500/20 transition-all duration-300 transform active:scale-95">
+                    Save & Publish Lecture
+                </button>
+            </form>
+        </div>
+
+        <div class="mt-12">
+            <h2 class="text-xl font-bold mb-4">Uploaded Lectures Status</h2>
+            <div id="lecturesList" class="space-y-3">
+                <p class="text-slate-500 text-sm italic">Koi lecture abhi tak add nahi kiya gaya hai.</p>
+            </div>
+        </div>
+
+    </main>
+
+    <script>
+        const form = document.getElementById('lectureForm');
+        const listContainer = document.getElementById('lecturesList');
+
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            const title = document.getElementById('title').value;
+            const batch = document.getElementById('batch').value;
+            const subject = document.getElementById('subject').value;
+            const streamUrl = document.getElementById('streamUrl').value;
+            let thumbnailUrl = document.getElementById('thumbnailUrl').value;
+
+            if(!thumbnailUrl) {
+                thumbnailUrl = 'https://images.unsplash.com/photo-1616469829581-73993eb86b02?q=80&w=500';
+            }
+
+            const newLecture = {
+                id: Date.now().toString(),
+                title,
+                batch,
+                subject,
+                streamUrl,
+                thumbnailUrl
+            };
+
+            let currentLectures = JSON.parse(localStorage.getItem('pw_lectures')) || [];
+            currentLectures.push(newLecture);
+            localStorage.setItem('pw_lectures', JSON.stringify(currentLectures));
+
+            alert('Lecture Successfully Saved!');
+            form.reset();
+            renderLectures();
+        });
+
+        function renderLectures() {
+            let currentLectures = JSON.parse(localStorage.getItem('pw_lectures')) || [];
+            if(currentLectures.length === 0) return;
+
+            listContainer.innerHTML = '';
+            currentLectures.forEach(lec => {
+                listContainer.innerHTML += `
+                    <div class="bg-slate-900 border border-slate-800 px-4 py-3 rounded-xl flex justify-between items-center text-sm">
+                        <div>
+                            <span class="text-xs bg-indigo-900/50 text-indigo-400 px-2 py-0.5 rounded mr-2 font-semibold">${lec.batch}</span>
+                            <span class="text-xs bg-emerald-900/50 text-emerald-400 px-2 py-0.5 rounded mr-2 font-semibold">${lec.subject}</span>
+                            <span class="text-slate-200 font-medium">${lec.title}</span>
+                        </div>
+                        <button onclick="deleteLecture('${lec.id}')" class="text-rose-500 hover:text-rose-400 font-medium transition">Delete</button>
+                    </div>
+                `;
+            });
+        }
+
+        window.deleteLecture = function(id) {
+            let currentLectures = JSON.parse(localStorage.getItem('pw_lectures')) || [];
+            currentLectures = currentLectures.filter(lec => lec.id !== id);
+            localStorage.setItem('pw_lectures', JSON.stringify(currentLectures));
+            renderLectures();
+            if(currentLectures.length === 0) {
+                listContainer.innerHTML = '<p class="text-slate-500 text-sm italic">Koi lecture abhi tak add nahi kiya gaya hai.</p>';
+            }
+        }
+
+        renderLectures();
+    </script>
+</body>
+</html>
