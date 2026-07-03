@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>STREAMx - Premium HLS Video Streaming</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom Animations & Background Glow */
+        .glow-bg {
+            background: radial-gradient(circle at 50% 50%, rgba(99, 102, 241, 0.15) 0%, rgba(0, 0, 0, 0) 50%);
+        }
+        .animate-subtle {
+            animation: pulseGlow 8s ease-in-out infinite alternate;
+        }
+        @keyframes pulseGlow {
+            0% { transform: scale(1); opacity: 0.5; }
+            100% { transform: scale(1.2); opacity: 0.8; }
+        }
+    </style>
+</head>
+<body class="bg-[#090a0f] text-slate-100 min-h-screen flex flex-col justify-between font-sans overflow-x-hidden selection:bg-indigo-500 selection:text-white">
+
+    <div class="absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[600px] glow-bg pointer-events-none z-0 animate-subtle"></div>
+
+    <header class="sticky top-0 z-50 backdrop-blur-md bg-[#090a0f]/60 border-b border-slate-800/50 px-6 py-4">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <div class="flex items-center space-x-2 group cursor-pointer">
+                <div class="w-8 h-8 rounded-lg bg-gradient-to-tr from-indigo-500 to-violet-600 flex items-center justify-center shadow-lg shadow-indigo-500/30">
+                    <svg class="w-4 h-4 text-white fill-current" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                </div>
+                <span class="text-xl font-black tracking-wider text-white">STREAM<span class="text-indigo-500">X</span></span>
+            </div>
+            
+            <nav class="hidden md:flex items-center space-x-8 text-sm font-medium text-slate-400">
+                <a href="store.html" class="hover:text-white transition">Explore Library</a>
+                <a href="admin.html" class="hover:text-white transition flex items-center space-x-1">
+                    <span>Admin Panel</span>
+                    <span class="w-1.5 h-1.5 rounded-full bg-indigo-500"></span>
+                </a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="relative z-10 flex-grow flex items-center justify-center px-6 py-12">
+        <div class="max-w-4xl text-center space-y-8">
+            
+            <div class="inline-flex items-center space-x-2 bg-slate-900/80 border border-slate-800 px-4 py-1.5 rounded-full backdrop-blur-sm">
+                <span class="flex h-2 w-2 relative">
+                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75"></span>
+                    <span class="relative inline-flex rounded-full h-2 w-2 bg-indigo-500"></span>
+                </span>
+                <span class="text-xs font-medium text-slate-300 tracking-wide">Ultra Fast HLS Multi-bitrate Streaming Ready</span>
+            </div>
+
+            <h1 class="text-4xl sm:text-6xl lg:text-7xl font-black tracking-tight leading-[1.1] text-white">
+                Your Recorded Videos.<br>
+                <span class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 via-violet-400 to-purple-500">
+                    Cinema Style Experience.
+                </span>
+            </h1>
+
+            <p class="text-base sm:text-xl text-slate-400 max-w-2xl mx-auto font-light leading-relaxed">
+                Bina kisi buffering ke, adaptive `.m3u8` streaming ka maza lijiye. Apne videos ko safe host karein aur aur kahi bhi play karein.
+            </p>
+
+            <div class="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
+                <a href="store.html" class="w-full sm:w-auto px-8 py-4 bg-white text-black font-semibold rounded-xl hover:bg-slate-200 transition-all duration-300 transform hover:-translate-y-0.5 shadow-xl shadow-white/5 text-center">
+                    Open Video Store
+                </a>
+                <a href="admin.html" class="w-full sm:w-auto px-8 py-4 bg-slate-900/60 text-slate-300 font-semibold rounded-xl border border-slate-800 hover:border-slate-700 hover:bg-slate-900 transition-all duration-300 text-center">
+                    Upload New Video (Admin)
+                </a>
+            </div>
+
+        </div>
+    </main>
+
+    <footer class="relative z-10 border-t border-slate-900 bg-[#06070a] px-6 py-6">
+        <div class="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-4 text-xs text-slate-500">
+            <div>&copy; 2026 STREAMx Dashboard. All Rights Reserved.</div>
+            <div class="flex space-x-6">
+                <span class="flex items-center gap-1 text-emerald-500">
+                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span> Storage Connected
+                </span>
+                <span>HLS Player v8.3</span>
+            </div>
+        </div>
+    </footer>
+
+</body>
+</html>
