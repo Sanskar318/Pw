@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>STREAMx - PW Lecture Store</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-[#090a0f] text-slate-100 min-h-screen font-sans">
+
+    <header class="sticky top-0 z-50 backdrop-blur-md bg-[#090a0f]/80 border-b border-slate-800/60 px-6 py-4">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <a href="index.html" class="text-xl font-black tracking-wider text-white">STREAM<span class="text-indigo-500">X</span></a>
+            <div class="flex items-center space-x-6">
+                <a href="admin.html" class="text-sm text-slate-400 hover:text-white transition">+ Add Lecture (Admin)</a>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-6 py-10">
+        
+        <div class="mb-10">
+            <h1 class="text-3xl md:text-4xl font-extrabold tracking-tight">PW Batches & Lectures</h1>
+            <p class="text-slate-400 mt-2 text-sm md:text-base">Apna batch select karein aur padhai shuru karein.</p>
+        </div>
+
+        <div id="batchesContainer" class="space-y-12">
+            <div id="noVideosMessage" class="text-center py-20 text-slate-500 italic border border-dashed border-slate-800 rounded-2xl">
+                Koi lectures nahi mile. Pehle <a href="admin.html" class="text-indigo-400 underline">Admin Panel</a> mein jaakar lectures add karein.
+            </div>
+        </div>
+
+    </main>
+
+    <footer class="border-t border-slate-900 bg-[#06070a] px-6 py-8 mt-20 text-center text-xs text-slate-600">
+        <p>&copy; 2026 STREAMx Store. All PW Batches Organized.</p>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const container = document.getElementById('batchesContainer');
+            const noVideosMessage = document.getElementById('noVideosMessage');
+
+            // 1. LocalStorage se save kiye huye lectures nikalna
+            const lectures = JSON.parse(localStorage.getItem('pw_lectures')) || [];
+
+            if (lectures.length > 0) {
+                // Agar videos hain toh "No Videos" message hata do
+                noVideosMessage.remove();
+
+                // 2. Lectures ko unke "Batch" ke hisab se group (akatha) karna
+                const groupedByBatch = {};
+                lectures.forEach(lec => {
+                    if (!groupedByBatch[lec.batch]) {
+                        groupedByBatch[lec.batch] = [];
+                    }
+                    groupedByBatch[lec.batch].push(lec);
+                });
+
+                // 3. Har ek Batch ke liye Netflix jaisi Row taiyar karna
+                for (const batchName in groupedByBatch) {
+                    const batchRow = document.createElement('div');
+                    batchRow.className = 'batch-row';
+
+                    // Row ki Heading (Jaise: Yakeen NEET)
+                    let rowHTML = `
+                        <h2 class="text-xl font-bold tracking-wide mb-4 text-indigo-400 flex items-center gap-2">
+                            <span class="w-2 h-2 rounded-full bg-indigo-500"></span> ${batchName}
+                        </h2>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                    `;
+
+                    // Us batch ke andar ke saare lectures (Cards)
+                    groupedByBatch[batchName].forEach(lec => {
+                        rowHTML += `
+                            <div class="bg-slate-900/40 border border-slate-800/80 rounded-xl overflow-hidden hover:border-slate-700 transition duration-300 group flex flex-col justify-between">
+                                <div>
+                                    <div class="relative aspect-video bg-slate-950 overflow-hidden">
+                                        <img src="${lec.thumbnailUrl}" alt="${lec.title}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500 opacity-80 group-hover:opacity-100">
+                                        <span class="absolute top-3 left-3 bg-slate-950/80 text-xs px-2.5 py-1 rounded-md border border-slate-800 font-medium text-slate-300">
+                                            ${lec.subject}
+                                        </span>
+                                    </div>
+                                    <div class="p-4">
+                                        <h3 class="font-semibold text-sm line-clamp-2 text-slate-200 group-hover:text-white transition">
+                                            ${lec.title}
+                                        </h3>
+                                    </div>
+                                </div>
+                                <div class="px-4 pb-4">
+                                    <a href="player.html?videoUrl=${encodeURIComponent(lec.streamUrl)}&title=${encodeURIComponent(lec.title)}" class="block text-center w-full py-2 bg-slate-800 group-hover:bg-indigo-600 text-slate-300 group-hover:text-white text-xs font-semibold rounded-lg transition duration-300">
+                                        Start Learning
+                                    </a>
+                                </div>
+                            </div>
+                        `;
+                    });
+
+                    rowHTML += `</div>`; // Grid close
+                    batchRow.innerHTML = rowHTML;
+                    container.appendChild(batchRow);
+                }
+            }
+        });
+    </script>
+</body>
+</html>
