@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>STREAMx - Admin Dashboard</title>
+    <title>STREAMx - Admin Dashboard (Secure)</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-[#090a0f] text-slate-100 min-h-screen font-sans">
@@ -19,7 +19,7 @@
         
         <div class="mb-8">
             <h1 class="text-3xl font-bold tracking-tight">Add New PW Lecture / Content</h1>
-            <p class="text-slate-400 text-sm mt-1">Yahan se aap naye batches, subjects aur unke m3u8 streaming links ko database (Local Storage) mein add kar sakte hain.</p>
+            <p class="text-slate-400 text-sm mt-1">Secure dashboard se naye batches aur links ko save karein.</p>
         </div>
 
         <div class="bg-slate-900/50 border border-slate-800 rounded-2xl p-6 backdrop-blur-sm shadow-xl">
@@ -60,7 +60,12 @@
 
                 <div>
                     <label class="block text-sm font-medium text-slate-300 mb-2">Thumbnail Image URL (Optional)</label>
-                    <input type="url" id="thumbnailUrl" placeholder="https://link-to-image.jpg (Khaali chhodne par default set hoga)" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-slate-100 focus:outline-none focus:border-indigo-500 placeholder-slate-600 transition">
+                    <input type="url" id="thumbnailUrl" placeholder="https://link-to-image.jpg" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-slate-100 focus:outline-none focus:border-indigo-500 placeholder-slate-600 transition">
+                </div>
+
+                <div class="border-t border-slate-800 pt-4">
+                    <label class="block text-sm font-medium text-rose-400 mb-2">Admin Security Key (Password)</label>
+                    <input type="password" id="adminPassword" required placeholder="Enter Secret Password to Save" class="w-full bg-slate-950 border border-rose-900/50 rounded-xl px-4 py-3 text-slate-100 focus:outline-none focus:border-rose-500 placeholder-slate-700 transition">
                 </div>
 
                 <button type="submit" class="w-full py-4 bg-indigo-500 hover:bg-indigo-600 text-white font-semibold rounded-xl shadow-lg shadow-indigo-500/20 transition-all duration-300 transform active:scale-95">
@@ -82,8 +87,18 @@
         const form = document.getElementById('lectureForm');
         const listContainer = document.getElementById('lecturesList');
 
+        // Yahan aap apna khud ka secret password set kar sakte hain
+        const SECRET_PASSWORD = "PW2026"; 
+
         form.addEventListener('submit', (e) => {
             e.preventDefault();
+
+            // Password Validation
+            const enteredPassword = document.getElementById('adminPassword').value;
+            if (enteredPassword !== SECRET_PASSWORD) {
+                alert('Wrong Admin Password! Data save nahi hua.');
+                return;
+            }
 
             const title = document.getElementById('title').value;
             const batch = document.getElementById('batch').value;
@@ -108,7 +123,7 @@
             currentLectures.push(newLecture);
             localStorage.setItem('pw_lectures', JSON.stringify(currentLectures));
 
-            alert('Lecture Successfully Saved!');
+            alert('Lecture Successfully Saved with Security Authentication!');
             form.reset();
             renderLectures();
         });
@@ -133,6 +148,13 @@
         }
 
         window.deleteLecture = function(id) {
+            // Delete karte waqt bhi password check lagana ho toh laga sakte hain
+            const promptPassword = prompt("Lecture delete karne ke liye Admin Password dalein:");
+            if (promptPassword !== SECRET_PASSWORD) {
+                alert("Galat password! Delete cancelled.");
+                return;
+            }
+
             let currentLectures = JSON.parse(localStorage.getItem('pw_lectures')) || [];
             currentLectures = currentLectures.filter(lec => lec.id !== id);
             localStorage.setItem('pw_lectures', JSON.stringify(currentLectures));
